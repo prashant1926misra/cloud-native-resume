@@ -28,7 +28,7 @@ resource "aws_s3_bucket_policy" "public_read_policy" {
   block_public_acls = false
   ignore_public_acls  = false
   block_public_policy =  false
-  restrict_public_buckets = false 
+  restrict_public_buckets = false
 
 
   policy = jsonencode({
@@ -44,4 +44,3 @@ resource "aws_s3_bucket_policy" "public_read_policy" {
     ]
   })
 }
-
