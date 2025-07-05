@@ -9,9 +9,10 @@ logger.setLevel("INFO")
 
 def lambda_handler(event, context):
     try:
-        name = event['name']
-        email = event['email']
-        message = event['message']
+        data = json.loads(event['body'])
+        name = data['name']
+        email = data['email']
+        message = data['message']
 
         return {  # Success response
             "statusCode": 200,
