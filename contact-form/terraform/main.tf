@@ -56,3 +56,20 @@ data "archive_file" "lambda_package" {
   source_file = "${path.module}/../lambda/main.py"
   output_path = "${path.module}/../lambda/lambda_package.zip"
 }
+
+# Lambda function resource
+resource "aws_lambda_function" "lambda_handler" {
+  filename         = data.archive_file.example.output_path
+  function_name    = "var.lambda_function_name"
+  role             = aws_iam_role.lambda_exec_role.arn
+  handler          = "main.lambda_handler"
+  source_code_hash = data.archive_file.example.output_base64sha256
+
+  runtime = "python3.12"
+
+  environment {
+    variables = {
+      RECIPIENT_EMAIL = var.recipient_email
+    }
+  }
+}
