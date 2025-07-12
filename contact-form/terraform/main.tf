@@ -51,8 +51,8 @@ resource "aws_iam_role_policy" "lambda_policy" {
 }
 
 # Package the Lambda function code
-data "archive_file" "example" {
+data "archive_file" "lambda_package" {
   type        = "zip"
   source_file = "${path.module}/../lambda/main.py"
-  output_path = "${path.module}/../lambda/function.zip"
+  output_path = "${path.module}/../lambda/lambda_package.zip"
 }
