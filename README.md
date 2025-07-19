@@ -22,27 +22,41 @@ This phase builds a serverless backend for a contact form using AWS-native servi
 
 ## API Details
 
-Endpoint -
+### Endpoint -
 
-POST /contact
-Content-Type: application/json
+`POST /contact` (Full URL provided by Terraform output)
 
-Example Payload -
+### Headers -
+`Content-Type: application/json`
+
+### Example Payload -
 
 ```json
 {
-    "name": "Jane Doe",
-    "email": "jane@example.com",
+    "name": "Neo",
+    "email": "neo@example.com",
     "message": "Hello from the contact form!"
 }
 ```
-Expected Output -
+### Expected Output -
  
 ```json
 {
     "message": "Form submitted successfully"
 }
 ```
+### Test the API -
+
+```bash
+curl -X POST https://<your-api-id>.execute-api.<region>.amazonaws.com/contact \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Neo",
+    "email": "neo@example.com",
+    "message": "Hello from the contact form!"
+  }'
+```
+#### Note: Replace `<your-api-id>` and `<region>` with the actual values from the Terraform output.
 
 ## Project Structure
 
