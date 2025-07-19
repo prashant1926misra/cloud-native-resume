@@ -60,7 +60,7 @@ data "archive_file" "lambda_package" {
 # Lambda function resource
 resource "aws_lambda_function" "lambda_handler" {
   filename         = data.archive_file.lambda_package.output_path
-  function_name    = "var.lambda_function_name"
+  function_name    = var.lambda_function_name
   role             = aws_iam_role.lambda_exec_role.arn
   handler          = "main.lambda_handler"
   source_code_hash = data.archive_file.lambda_package.output_base64sha256
