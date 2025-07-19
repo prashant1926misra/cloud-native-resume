@@ -1,1 +1,21 @@
+# Terraform state files 
+terraform.tfstate
+terraform.tfstate.*
+*.tfstate.backup
 .terraform/
+
+# Variable files 
+*.tfvars.*
+
+# Lambda build artifacts (zipped code)
+*.zip
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# AWS
+.aws/
+credentials
+config
+
