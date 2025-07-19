@@ -62,16 +62,15 @@ curl -X POST https://<your-api-id>.execute-api.<region>.amazonaws.com/contact \
 
 ```text
 contact-form/
-├── lambda/
+├── lambda
 │   ├── main.py
 │   └── requirements.txt
-├── terraform/
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── outputs.tf
-│   ├── iam.tf
-│   └── terraform.tfstate
-└── README.md
+├── README.md
+└── terraform
+    ├── main.tf
+    ├── outputs.tf
+    ├── terraform.tfvars
+    └── variables.tf
 ```
 
 
