@@ -35,7 +35,6 @@ resource "aws_dynamodb_table_item" "initial_item" {
 ITEM
 }
 
-
 # Define an IAM role that allows Lambda to access resources in AWS account
 resource "aws_iam_role" "lambda_exec_role" {
     name               = "lambda_execution_role"
@@ -55,7 +54,6 @@ resource "aws_iam_role" "lambda_exec_role" {
 
 # Fetch AWS account Id dynamically
 data "aws_caller_identity" "current" {}
-
 
 # IAM Policy attachement for Lambda access to DynamoDB
 resource "aws_iam_policy" "lambda_dynamodb_policy" {
@@ -92,7 +90,6 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamorole" {
   policy_arn = aws_iam_policy.lambda_dynamodb_policy.arn
 }
 
-
 # Package the Lambda function code
 data "archive_file" "lambda_package" {
   type        = "zip"
@@ -125,7 +122,7 @@ resource "aws_apigatewayv2_integration" "lambda_integration" {
   api_id                 = aws_apigatewayv2_api.api_gateway.id
   integration_type       = "AWS_PROXY"
   integration_uri        = aws_lambda_function.lambda_handler.invoke_arn
-  integration_method     = "GET"
+  #integration_method     = "GET"
   payload_format_version = "2.0"
 }
 
@@ -142,7 +139,6 @@ resource "aws_apigatewayv2_route" "lambda_route" {
   route_key = "GET /visits"    # HTTP method/resource path   
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
-
 
 # Lambda permission for API Gateway
 resource "aws_lambda_permission" "apigw_invoke" {
