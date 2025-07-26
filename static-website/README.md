@@ -10,11 +10,12 @@ This phase involves deploying a static resume or portfolio website using Amazon 
 
 ## Tech Stack and AWS Services Used
 
-| Service          | Purpose                                 |
-|------------------|-----------------------------------------|
-| **Terraform**    | Infrastructure as Code (IaC)            |
-| **Amazon S3**    | Runs contact form processing logic      |
-| **IAM**          | Allows S3 access                        |
+| **Service** | **Purpose**                                                        |
+| ----------- | ------------------------------------------------------------------ |
+| Terraform   | Infrastructure as Code (IaC) to provision and manage AWS resources |
+| Amazon S3   | Hosts the static resume or portfolio website (HTML, CSS, JS files) |
+| IAM         | Grants secure access permissions to S3 resources                   |
+
 
 
 ## Website Access
