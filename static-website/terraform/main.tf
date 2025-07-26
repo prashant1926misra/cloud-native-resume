@@ -5,12 +5,6 @@ provider "aws" {
 resource "aws_s3_bucket" "static_site" {
   bucket = var.bucket_name
 
-  tags = {
-    Environment = "MVP"
-    Project     = "cloud-native-resume"
-  }
-}
-
 resource "aws_s3_bucket_website_configuration" "static_site_config" {
   bucket = aws_s3_bucket.static_site.id
 
@@ -19,9 +13,15 @@ resource "aws_s3_bucket_website_configuration" "static_site_config" {
   }
 }
 
+resource "aws_s3_object" "index_html" {
+  bucket       = aws_s3_bucket.static_site.id
+  key          = "index.html"
+  source       = "${path.module}/../website/index.html
+  content_type = "text/html"
+}
+
 resource "aws_s3_bucket_public_access_block" "allow_public_policy" {
   bucket = aws_s3_bucket.static_site.id
-
   block_public_acls       = false
   block_public_policy     = false
   ignore_public_acls      = false
