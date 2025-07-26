@@ -5,13 +5,17 @@ provider "aws" {
 resource "aws_s3_bucket" "static_site" {
   bucket = var.bucket_name
 
-  website {
-    index_document = "index.html"
-  }
-
   tags = {
     Environment = "MVP"
     Project     = "cloud-native-resume"
+  }
+}
+
+resource "aws_s3_bucket_website_configuration" "static_site_config" {
+  bucket = aws_s3_bucket.static_site.id
+
+  index_document {
+    suffix = "index.html"
   }
 }
 
