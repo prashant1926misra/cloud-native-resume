@@ -29,7 +29,7 @@ def lambda_handler(event, context):
             'headers': {
                 'Content-Type': 'application/json',
             },
-            'body': json.dumps({'count': new_count})
+            'body': json.dumps({'count': int(new_count)})
         }
 
     except Exception as e:
