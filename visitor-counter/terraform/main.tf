@@ -78,8 +78,8 @@ resource "aws_iam_policy" "lambda_dynamodb_policy" {
           "dynamodb:BatchWriteItem"
         ]
         Resource = [
-          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/visitor_count_table",
-          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/visitor_count_table/index/*"
+          "arn:aws:dynamodb:${var.region}:${data.aws_caller_identity.current.account_id}:table/visitor_count_table",
+          "arn:aws:dynamodb:${var.region}:${data.aws_caller_identity.current.account_id}:table/visitor_count_table/index/*"
         ]
       }
     ]
