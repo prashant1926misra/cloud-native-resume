@@ -13,10 +13,8 @@ This phase involves deploying a static resume or portfolio website using Amazon 
 | **Service** | **Purpose**                                                        |
 | ----------- | ------------------------------------------------------------------ |
 | Terraform   | Infrastructure as Code (IaC) to provision and manage AWS resources |
-| Amazon S3   | Hosts the static resume or portfolio website (HTML, CSS, JS files) |
+| Amazon S3   | Hosts the static resume or portfolio website                       |
 | IAM         | Grants secure access permissions to S3 resources                   |
-
-
 
 ## Website Access
 
