@@ -21,6 +21,7 @@ resource "aws_dynamodb_table" "visitor_count_table" {
     type = "S"    # 'S' for String, 'N' for Number, 'B' for Binary
   }
 
+}
 
 resource "aws_dynamodb_table_item" "initial_item" {
   table_name = aws_dynamodb_table.visitor_count_table.name
