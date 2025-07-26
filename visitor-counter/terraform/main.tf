@@ -1,10 +1,10 @@
-
 /*
 Documentation:
  https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table
  https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table_item
  https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_lambda-access-dynamodb.html
-
+ https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apigatewayv2_route
+ https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-routes.html
 */
 
 provider "aws" {
@@ -12,20 +12,15 @@ provider "aws" {
 }
 
 resource "aws_dynamodb_table" "visitor_count_table" {
-  name           = "visitor_count_table"
-  billing_mode   = "PAY_PER_REQUEST"   # Controls how you are charged for read and write throughput. Default - Provisioned 
-  hash_key       = "id"                # Parition key eg user1 user2... must be unique 
+  name           = "visitor_count_table"  # Must be unique in AWS account/region
+  billing_mode   = "PAY_PER_REQUEST"   # Pay only for actual reads/writes
+  hash_key       = "id"                # Primary key (e.g., "user123", "page_about")
 
   attribute {
-    name = "id"
-    type = "S"
+    name = "id"   # Define the attribute for the hash_key
+    type = "S"    # 'S' for String, 'N' for Number, 'B' for Binary
   }
 
-  tags = {
-    Name        = "visitor_count_table"
-    Environment = "DEV"
-  }
-}
 
 resource "aws_dynamodb_table_item" "initial_item" {
   table_name = aws_dynamodb_table.visitor_count_table.name
@@ -114,4 +109,45 @@ resource "aws_lambda_function" "lambda_handler" {
 
   runtime = "python3.12"
 
+}
+
+# ****API Gateway Lambda integration****
+
+# Create api gateway 
+resource "aws_apigatewayv2_api" "api_gateway" {
+  name          = "visitor-counter-api"
+  protocol_type = "HTTP"
+}
+
+# API Gateway Lambda Integration
+resource "aws_apigatewayv2_integration" "lambda_integration" {
+  api_id                 = aws_apigatewayv2_api.api_gateway.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = aws_lambda_function.lambda_handler.invoke_arn
+  integration_method     = "GET"
+  payload_format_version = "2.0"
+}
+
+# API Gateway Stage
+resource "aws_apigatewayv2_stage" "default_stage" {
+  api_id = aws_apigatewayv2_api.api_gateway.id
+  name        = "$default"
+  auto_deploy = true
+}
+
+# API Gateway Route
+resource "aws_apigatewayv2_route" "lambda_route" {
+  api_id    = aws_apigatewayv2_api.api_gateway.id
+  route_key = "GET /visits"    # HTTP method/resource path   
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+
+# Lambda permission for API Gateway
+resource "aws_lambda_permission" "apigw_invoke" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda_handler.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.api_gateway.execution_arn}/*/*"
 }
