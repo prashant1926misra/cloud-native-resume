@@ -30,7 +30,7 @@ resource "aws_dynamodb_table_item" "initial_item" {
   item = <<ITEM
 {
   "id": {"S": "visits"},
-  "count": {"N": "0"},
+  "count": {"N": "0"}
 }
 ITEM
 }
