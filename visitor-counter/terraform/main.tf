@@ -52,6 +52,12 @@ resource "aws_iam_role" "lambda_exec_role" {
   })
 }
 
+# Attach the AWS managed policy to allow the Lambda function to write Logs to the CloudWatch
+resource "aws_iam_role_policy_attachment" "lambda_cloudwatch" {
+  role       = aws_iam_role.lambda_exec_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
 # Fetch AWS account Id dynamically
 data "aws_caller_identity" "current" {}
 
