@@ -5,6 +5,12 @@ provider "aws" {
 resource "aws_s3_bucket" "static_site" {
   bucket = var.bucket_name
 
+  tags = {
+    Environment = "DEV"
+    Project     = "cloud-native-resume"
+  }
+}
+
 resource "aws_s3_bucket_website_configuration" "static_site_config" {
   bucket = aws_s3_bucket.static_site.id
 
@@ -13,15 +19,9 @@ resource "aws_s3_bucket_website_configuration" "static_site_config" {
   }
 }
 
-resource "aws_s3_object" "index_html" {
-  bucket       = aws_s3_bucket.static_site.id
-  key          = "index.html"
-  source       = "${path.module}/../website/index.html
-  content_type = "text/html"
-}
-
 resource "aws_s3_bucket_public_access_block" "allow_public_policy" {
   bucket = aws_s3_bucket.static_site.id
+
   block_public_acls       = false
   block_public_policy     = false
   ignore_public_acls      = false
@@ -44,11 +44,21 @@ resource "aws_s3_bucket_policy" "public_read_policy" {
     Statement = [
       {
         Sid: "PublicReadGetObject",
-        Effect: "Allow",
-        Principal: "*",
-        Action: "s3:GetObject",
-        Resource: "${aws_s3_bucket.static_site.arn}/*"
+        Effect = "Allow",
+        Principal = "*",
+        Action = "s3:GetObject",
+        Resource = "${aws_s3_bucket.static_site.arn}/*"
       }
     ]
   })
+
+  depends_on = [aws_s3_bucket_public_access_block.allow_public_policy]
+}
+
+# Upload index.html to S3 bucket automatically
+resource "aws_s3_object" "index_html" {
+  bucket       = aws_s3_bucket.static_site.id
+  key          = "index.html"
+  source       = "${path.module}/../website/index.html"
+  content_type = "text/html"
 }
