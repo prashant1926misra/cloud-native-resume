@@ -95,7 +95,7 @@ resource "aws_codebuild_project" "static_site_build" {
   source {
     type      = "GITHUB"
     location  = "https://github.com/${var.github_owner}/${var.github_repo}.git"
-    buildspec = "buildspec.yml"
+    buildspec = "ci-cd/buildspec.yml"
   }
 
   # Build environment
