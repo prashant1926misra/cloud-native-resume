@@ -1,17 +1,16 @@
+# --------------------------------------
 # AWS Provider Configuration
+# --------------------------------------
 provider "aws" {
-  region = "ap-south-1" 
+  region = "ap-south-1"
 }
 
 # --------------------------------------
 # IAM Role for CodeBuild
 # --------------------------------------
-
-# This role allows CodeBuild to access AWS resources
 resource "aws_iam_role" "codebuild_role" {
   name = "codebuild-role"
 
-  # Trust policy so CodeBuild can assume this role
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -24,7 +23,6 @@ resource "aws_iam_role" "codebuild_role" {
   })
 }
 
-# Policy attached to the role: allows access to S3 & CloudWatch
 resource "aws_iam_role_policy" "codebuild_policy" {
   name = "codebuild-policy"
   role = aws_iam_role.codebuild_role.id
@@ -46,12 +44,9 @@ resource "aws_iam_role_policy" "codebuild_policy" {
   })
 }
 
-
 # --------------------------------------
 # IAM Role for CodePipeline
 # --------------------------------------
-
-# This role allows CodePipeline to trigger CodeBuild and access AWS services
 resource "aws_iam_role" "codepipeline_role" {
   name = "codepipeline-role"
 
@@ -67,7 +62,6 @@ resource "aws_iam_role" "codepipeline_role" {
   })
 }
 
-# Policy attached to the role: allows it to start CodeBuild & access S3
 resource "aws_iam_role_policy" "codepipeline_policy" {
   name = "codepipeline-policy"
   role = aws_iam_role.codepipeline_role.id
@@ -76,12 +70,12 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect   = "Allow"
-        Action   = [
+        Effect = "Allow"
+        Action = [
           "codebuild:*",
           "s3:*",
-          "iam:PassRole"
-		  "secretsmanager:GetSecretValue"
+          "iam:PassRole",
+          "secretsmanager:GetSecretValue"
         ]
         Resource = "*"
       }
@@ -92,51 +86,92 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
 # --------------------------------------
 # CodeBuild Project
 # --------------------------------------
-
-# Build and deploy the static website using buildspec.yml
 resource "aws_codebuild_project" "static_site_build" {
   name         = "static-site-build"
   description  = "Build project to sync static website files to S3"
-  
   service_role = aws_iam_role.codebuild_role.arn
-}
 
-  # -----------------------
-  # Source code settings
-  # -----------------------
+  # Source settings
   source {
     type      = "GITHUB"
     location  = "https://github.com/${var.github_owner}/${var.github_repo}.git"
     buildspec = "../buildspec.yml"
   }
 
-  # -----------------------
   # Build environment
-  # -----------------------
   environment {
     compute_type    = "BUILD_GENERAL1_SMALL"
-    image           = "aws/codebuild/standard:7.0" # latest standard image
+    image           = "aws/codebuild/standard:7.0"
     type            = "LINUX_CONTAINER"
     privileged_mode = false
   }
 
-  # -----------------------
-  # Artifacts
-  # -----------------------
+  # Artifacts (we're not producing any output artifacts directly from CodeBuild)
   artifacts {
-    type = "NO_ARTIFACTS" 
+    type = "NO_ARTIFACTS"
   }
+}
 
 # --------------------------------------
-# Secrets Manager: GitHub token
+# Secrets Manager: GitHub Token
 # --------------------------------------
-
-# Reference the secret we created manually (name: github/token)
 data "aws_secretsmanager_secret" "github_token" {
   name = "github/token"
 }
 
-# Fetch the latest version of the secret
 data "aws_secretsmanager_secret_version" "github_token" {
   secret_id = data.aws_secretsmanager_secret.github_token.id
+}
+
+# --------------------------------------
+# CodePipeline
+# --------------------------------------
+resource "aws_codepipeline" "static_site_pipeline" {
+  name     = "static-site-pipeline"
+  role_arn = aws_iam_role.codepipeline_role.arn
+
+  artifact_store {
+    type     = "S3"
+    location = var.s3_bucket_name
+  }
+
+  # Source Stage (GitHub)
+  stage {
+    name = "Source"
+
+    action {
+      name             = "GitHub_Source"
+      category         = "Source"
+      owner            = "ThirdParty"
+      provider         = "GitHub"
+      version          = "1"
+      output_artifacts = ["source_output"]
+
+      configuration = {
+        Owner      = var.github_owner
+        Repo       = var.github_repo
+        Branch     = var.github_branch
+        OAuthToken = data.aws_secretsmanager_secret_version.github_token.secret_string
+      }
+    }
+  }
+
+  # Build Stage (CodeBuild)
+  stage {
+    name = "Build"
+
+    action {
+      name             = "CodeBuild_Build"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      input_artifacts  = ["source_output"]
+      output_artifacts = []
+      version          = "1"
+
+      configuration = {
+        ProjectName = aws_codebuild_project.static_site_build.name
+      }
+    }
+  }
 }
