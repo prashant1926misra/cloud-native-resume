@@ -1,0 +1,7 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo "Syncing website to S3..."
+      - aws s3 sync static-website/website/ s3://cloud-resume-static-bucket --delete
