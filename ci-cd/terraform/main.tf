@@ -81,6 +81,7 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
           "codebuild:*",
           "s3:*",
           "iam:PassRole"
+		  "secretsmanager:GetSecretValue"
         ]
         Resource = "*"
       }
@@ -125,3 +126,17 @@ resource "aws_codebuild_project" "static_site_build" {
   artifacts {
     type = "NO_ARTIFACTS" 
   }
+
+# --------------------------------------
+# Secrets Manager: GitHub token
+# --------------------------------------
+
+# Reference the secret we created manually (name: github/token)
+data "aws_secretsmanager_secret" "github_token" {
+  name = "github/token"
+}
+
+# Fetch the latest version of the secret
+data "aws_secretsmanager_secret_version" "github_token" {
+  secret_id = data.aws_secretsmanager_secret.github_token.id
+}
