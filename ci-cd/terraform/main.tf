@@ -87,3 +87,15 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
     ]
   })
 }
+
+# --------------------------------------
+# CodeBuild Project
+# --------------------------------------
+
+# Build and deploy the static website using buildspec.yml
+resource "aws_codebuild_project" "static_site_build" {
+  name         = "static-site-build"
+  description  = "Build project to sync static website files to S3"
+  
+  service_role = aws_iam_role.codebuild_role.arn
+}
