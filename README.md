@@ -46,6 +46,9 @@ This project delivers a fully AWS-native portfolio website that showcases:
 ![Amazon CloudWatch](https://img.shields.io/badge/Amazon_CloudWatch-FF9900.svg?style=flat&logo=amazon-cloudwatch&logoColor=white)
 - AWS Secrets Manager:
 ![Amazon_Secrets_Manager](https://img.shields.io/badge/Amazon_Secrets_Manager-232F3E.svg?style=flat&logo=amazon-secrets-manager&logoColor=white)
+- AWS Lambda:
+![AWS Lambda](https://img.shields.io/badge/AWS_Lambda-FF9900.svg?style=flat&logo=aws-lambda&logoColor=white)
+
 
 
 ##  Architecture Diagram
