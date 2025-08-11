@@ -2,8 +2,7 @@
 
 
 ##  Problem Statement
-Building a modern, cloud-native portfolio application that is scalable, automated, and cost-efficient is challenging. Common challenges includes:
-- Hosting applications with global reach and minimal cost
+Building a modern, cloud-native portfolio application that is scalable, automated, and cost-efficient is tricky. Common challenges includes:
 - Automating deployments without complex third-party tools
 - Implementing serverless backends and data storage
 - Demonstrating real-world AWS skills without over-engineering
@@ -45,7 +44,7 @@ This project delivers a fully AWS-native portfolio website that showcases:
 ![DynamoDB](https://img.shields.io/badge/Amazon_DynamoDB-4053D6.svg?style=flat&logo=amazon-dynamodb&logoColor=white)
 - Amazon CloudWatch:
 ![Amazon CloudWatch](https://img.shields.io/badge/Amazon_CloudWatch-FF9900.svg?style=flat&logo=amazon-cloudwatch&logoColor=white)
-- Amazon_Secrets_Manager:
+- AWS Secrets Manager:
 ![Amazon_Secrets_Manager](https://img.shields.io/badge/Amazon_Secrets_Manager-232F3E.svg?style=flat&logo=amazon-secrets-manager&logoColor=white)
 
 
