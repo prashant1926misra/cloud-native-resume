@@ -50,12 +50,6 @@ This project delivers a fully AWS-native portfolio website that showcases:
 ![AWS Lambda](https://img.shields.io/badge/AWS_Lambda-FF9900.svg?style=flat&logo=aws-lambda&logoColor=white)
 
 
-
-##  Architecture Diagram
-
-<img width="897" height="531" alt="image" src="https://github.com/user-attachments/assets/0dc597b3-5bcb-4912-9f1a-06b6be270183" />
-
-
 ##  Project Structure
 
 ```text
